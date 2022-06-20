@@ -1,5 +1,12 @@
 package wakeapp;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
@@ -12,15 +19,13 @@ public class WakeApp {
 
 		// Variablen & Deklarationen
 		Scanner in = new Scanner(System.in);
-		String ankunftszeit;
-		float fahrtweg;
-		float zeitReady;
-		float zeitBus;
-		float mehrZeit;
-		double gesamteZeit;
-		String line = "----------------------------";
 		SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 		int option;
+		float fahrtweg, zeitReady, zeitBus, mehrZeit;
+		double gesamteZeit;
+		String ankunftszeit;
+		String line = "----------------------------";
+		
 
 		// Einleitung
 		System.out.println(
@@ -54,7 +59,7 @@ public class WakeApp {
 			System.out.println("Der Wecker wurde auf " + weckZeit + "Uhr gestellt.");
 
 		} else if (option == 1) {
-			System.out.println("Daten laden!");
+
 		}
 	}
 
