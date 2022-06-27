@@ -1,8 +1,1 @@
-
-	{
-		"ankunftszeit": "08:00",
-		"fahrtweg": "30.0",
-		"zeitReady": "40.0"
-		"zeitBus": "10.0"
-		"mehrZeit": "10.0"
-	}
+{"fahrtweg":"10.0","zeitBus":"10.0","mehrZeit":"10.0","zeitReady":"10.0","ankunftszeit":"10.0"}
