@@ -1,17 +1,15 @@
 package wakeapp;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Scanner;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 public class WakeApp {
 
@@ -25,7 +23,7 @@ public class WakeApp {
 		double gesamteZeit;
 		String ankunftszeit;
 		String line = "----------------------------";
-		
+		String fileName = "file.json";
 
 		// Einleitung
 		System.out.println(
@@ -33,7 +31,7 @@ public class WakeApp {
 						+ line + "\nHaben Sie gespeicherte Daten und wollen diese laden?\nJa (1) | Nein (2)");
 		option = in.nextInt();
 
-		// neue eingabe sowie Berrechnung
+		// case2
 		if (option == 2) {
 			do {
 				System.out.println("Neue Eingabe \nGeben Sie ihre Ankunftszeit ein in hh:mm Format:");
@@ -50,17 +48,64 @@ public class WakeApp {
 				System.out.println("Zusammenfassung:\nAnkunftszeit: " + ankunftszeit + " Uhr\nFahrtweg: " + fahrtweg
 						+ " Minuten\nZeit zum Fertig machen: " + zeitReady + " Minuten\nWeg zum Bus/Bahn: " + zeitBus
 						+ " Minuten\nWeitere Zeit: " + mehrZeit + " Minuten\nIst das korrekt? Ja (1) Nein (2)");
+
 				option = in.nextInt();
 			} while (option == 2);
-
+			
+			System.out.println("Berechne Weckzeit");
+			waitingLine();
 			gesamteZeit = fahrtweg + zeitReady + zeitBus + mehrZeit;
 			LocalTime aTime = LocalTime.parse(ankunftszeit);
 			LocalTime weckZeit = aTime.minus((long) gesamteZeit, ChronoUnit.MINUTES);
-			System.out.println("Der Wecker wurde auf " + weckZeit + "Uhr gestellt.");
+			System.out.println("\\nDer Wecker wurde auf " + weckZeit + " Uhr gestellt.");
 
+		// case1
 		} else if (option == 1) {
+			JSONParser parser = new JSONParser();
+			System.out.println("Daten werden aus der Datenbank geladen! \n\nBitte warten.");
+			waitingLine();
+			try {
+				Object obj = parser.parse(new FileReader(fileName));
+				JSONObject jsonObject = (JSONObject) obj;
+				do {
+					ankunftszeit = (String) jsonObject.get("ankunftszeit");
+					String fahrtwegStr = (String) jsonObject.get("fahrtweg");
+					fahrtweg = Float.parseFloat(fahrtwegStr);
+					String zeitReadyStr = (String) jsonObject.get("zeitReady");
+					zeitReady = Float.parseFloat(zeitReadyStr);
+					String zeitBusStr = (String) jsonObject.get("zeitBus");
+					zeitBus = Float.parseFloat(zeitBusStr);
+					String mehrZeitStr = (String) jsonObject.get("mehrZeit");
+					mehrZeit = Float.parseFloat(mehrZeitStr);
+					System.out.println("\n\nDiese Daten wurden geladen:\nAnkunftszeit: " + ankunftszeit
+							+ " Uhr\nFahrtweg: " + fahrtweg + " Minuten\nZeit zum Fertig machen: " + zeitReady
+							+ " Minuten\nWeg zum Bus/Bahn: " + zeitBus + " Minuten\nWeitere Zeit: " + mehrZeit
+							+ " Minuten");
+					System.out.println("Sind alle Daten soweit korrekt? Ja (1) Nein (2)");
+					option = in.nextInt();
+				} while (option == 2);
+				System.out.println("Berechne Weckzeit");
+				waitingLine();
+				gesamteZeit = fahrtweg + zeitReady + zeitBus + mehrZeit;
+				LocalTime aTime = LocalTime.parse(ankunftszeit);
+				LocalTime weckZeit = aTime.minus((long) gesamteZeit, ChronoUnit.MINUTES);
+				System.out.println("\nDer Wecker wurde auf " + weckZeit + " Uhr gestellt.");
+
+			} catch (FileNotFoundException e) {e.printStackTrace();
+			} catch (IOException e) {e.printStackTrace();
+			} catch (Exception e) {e.printStackTrace();}
 
 		}
+		in.close();
 	}
 
+	static void waitingLine() {
+		for (int i = 0; i <= 10; i++) {
+			System.out.print(".");
+			try {
+				Thread.sleep(250);
+			} catch (InterruptedException e) {e.printStackTrace();}
+		}
+
+	}
 }
